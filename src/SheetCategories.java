@@ -1,40 +1,86 @@
 public enum SheetCategories {
-    ONES("Einser", new int[] {1}, 0),
-    TWOS("Zweier", new int[] {2}, 1),
-    THREES("Dreier", new int[] {3}, 2),
-    FOURS("Vierer", new int[] {4}, 3),
-    FIVES("Fünfer", new int[] {5}, 4),
-    SIXES("Sechser", new int[] {6}, 5),
-    TOTAL_UPPER_PART("Gesamt", new int[] {}, 6),
-    BONUS("Bonus bei 63 oder mehr", new int[] {0, 35}, 7),
-    TOTAL_UPPER_PART_WITH_BONUS("Gesamt mit Bonus", new int[] {}, 8),
-    THREE_OF_A_KIND("Dreierpasch", new int[] {1, 2, 3, 4, 5, 6}, 9),
-    FOUR_OF_A_KIND("Viererpasch", new int[] {1, 2, 3, 4, 5, 6}, 10),
-    FULL_HOUSE("Full-House", new int[] {1, 2, 3, 4, 5, 6}, 11),
-    SMALL_STRAIGHT("Kleine Strasse", new int[] {1, 2, 3, 4, 5, 6}, 12),
-    LARGE_STRAIGHT("Grosse Strasse", new int[] {1, 2, 3, 4, 5, 6}, 13),
-    KNIFFEL("Kniffel", new int[] {1, 2, 3, 4, 5, 6}, 14),
-    CHANCE("Chance", new int[] {1, 2, 3, 4, 5, 6}, 15),
-    TOTAL_LOWER_PART("Gesamt unterer Teil", new int[] {}, 16),
-    TOTAL("Endsumme", new int[] {}, 17);
+    ONES("Einser", 0, 0),
+    TWOS("Zweier", 0, 1),
+    THREES("Dreier", 0, 2),
+    FOURS("Vierer", 0, 3),
+    FIVES("Fünfer", 0, 4),
+    SIXES("Sechser", 0, 5),
+    TOTAL_UPPER_PART("Gesamt", 0, 6),
+    BONUS("Bonus bei 63 oder mehr", 35, 7),
+    TOTAL_UPPER_PART_WITH_BONUS("Gesamt mit Bonus", 0, 8),
+    THREE_OF_A_KIND("Dreierpasch", 0, 9),
+    FOUR_OF_A_KIND("Viererpasch", 0, 10),
+    FULL_HOUSE("Full-House", 25, 11),
+    SMALL_STRAIGHT("Kleine Strasse", 30, 12),
+    LARGE_STRAIGHT("Grosse Strasse", 40, 13),
+    KNIFFEL("Kniffel", 50, 14),
+    CHANCE("Chance", 0, 15),
+    TOTAL_LOWER_PART("Gesamt unterer Teil", 0, 16),
+    TOTAL("Endsumme", 0, 17);
 
     private final String CATEGORY_NAME;
-    private final int[] DICE_IT_CAN_STORE;
+    private final int POINT_VALUE;
     private final int INDEX;
 
-    SheetCategories(String CATEGORY_NAME, int[] DICE_IT_CAN_STORE, int INDEX) {
+    SheetCategories(String CATEGORY_NAME, int POINT_VALUE, int INDEX) {
         this.CATEGORY_NAME = CATEGORY_NAME;
-        this.DICE_IT_CAN_STORE = DICE_IT_CAN_STORE;
+        this.POINT_VALUE = POINT_VALUE;
         this.INDEX = INDEX;
     }
 
     public String getName() {
         return CATEGORY_NAME;
     }
-    public int[] getDiceItCanStore() {
-        return DICE_IT_CAN_STORE;
+    public int getPointValue() {
+        return POINT_VALUE;
     }
     public int getIndex() {
         return INDEX;
+    }
+    public static SheetCategories getCategory(int i) {
+        switch (i) {
+            case 0 -> {
+                return ONES;
+            }
+            case 1 -> {
+                return TWOS;
+            }
+            case 2 -> {
+                return THREES;
+            }
+            case 3 -> {
+                return FOURS;
+            }
+            case 4 -> {
+                return FIVES;
+            }
+            case 5 -> {
+                return SIXES;
+            }
+            case 9 -> {
+                return THREE_OF_A_KIND;
+            }
+            case 10 -> {
+                return FOUR_OF_A_KIND;
+            }
+            case 11 -> {
+                return FULL_HOUSE;
+            }
+            case 12 -> {
+                return SMALL_STRAIGHT;
+            }
+            case 13 -> {
+                return LARGE_STRAIGHT;
+            }
+            case 14 -> {
+                return KNIFFEL;
+            }
+            case 15 -> {
+                return CHANCE;
+            }
+            default -> {
+                return TOTAL;
+            }
+        }
     }
 }

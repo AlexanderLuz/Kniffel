@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 
 public class DiceSet {
-    private final Dice[] DICES = new Dice[5];
+    public final Dice[] DICES = new Dice[5];
     {
         for(int i = 0; i<DICES.length; i++) {
             DICES[i] = new Dice();

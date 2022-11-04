@@ -1,17 +1,14 @@
-public class PointSheet {
-    private final SheetCategories[] sheetCategories = SheetCategories.values();
-    public int[] sheetValues = new int[18];
+import java.util.Collections;
+import java.util.HashMap;
 
-    public void printPointSheet() {
-        for(int i = 0; i<sheetCategories.length; i++) {
-            System.out.println();
-            System.out.printf("%25s",sheetCategories[i].getName());
-            System.out.print("|");
-            System.out.printf("%8s", sheetValues[i]);
-            if(i == 8 || i == 15) {
-                System.out.println();
-                System.out.print(String.format("%33s", "-").replace(' ', '-'));
-            }
+public class PointSheet {
+    public final SheetCategories[] sheetCategories = SheetCategories.values();
+
+    public HashMap<SheetCategories, Integer> playerPointSheet = new HashMap<SheetCategories, Integer>();
+
+    {
+        for(SheetCategories category:sheetCategories) {
+            playerPointSheet.put(category, 0);
         }
     }
 }
