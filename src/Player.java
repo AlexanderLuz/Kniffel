@@ -1,8 +1,4 @@
-import javax.xml.namespace.QName;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Scanner;
-import java.util.Arrays;
 
 public class Player {
     public String name;

@@ -6,18 +6,47 @@ public class Game {
     String playerName;
     public final SheetCategories[] sheetCategories = SheetCategories.values();
     ArrayList<Player> playerList = new ArrayList<Player>();
+    ArrayList<Player> winnerList = new ArrayList<Player>();
     public void PlayGame(){
         SetNumberOfPlayers();
         InstantiatePlayers();
         PrintPlayerList();
         clearScreen();
         for(int i = 0; i<13; i++) {
-            System.out.println();
-            System.out.println("Round "+(i+1));
-            printFiller("-");
             for(Player player: playerList) {
+                System.out.println();
+                System.out.println("Round "+(i+1));
+                printFiller("-");
+                System.out.println();
+                System.out.println(player.name);
+                printFiller("-");
                 takeTurn(player);
+                clearScreen();
             }
+        }
+        determineWinner();
+    }
+
+    private void determineWinner() {
+        int max = playerList.get(0).pointSheet.playerPointSheet.get(SheetCategories.TOTAL);
+        for(Player player:playerList) {
+            if(player.pointSheet.playerPointSheet.get(SheetCategories.TOTAL) > max) {
+                winnerList.clear();
+                winnerList.add(player);
+            }
+            if(player.pointSheet.playerPointSheet.get(SheetCategories.TOTAL) == max) {
+                winnerList.add(player);
+            }
+        }
+        if(winnerList.size() > 1) {
+            System.out.println("The winners are: ");
+            for(Player player:winnerList) {
+                System.out.println(player.name+" with "+player.pointSheet.playerPointSheet.get(SheetCategories.TOTAL));
+            }
+        }
+        else {
+            System.out.println("The winner is: ");
+            System.out.println(winnerList.get(0).name+" with "+winnerList.get(0).pointSheet.playerPointSheet.get(SheetCategories.TOTAL));
         }
     }
 
@@ -45,7 +74,8 @@ public class Game {
         playerCount = scanner.nextInt();
         scanner.nextLine();
     }
-    public void takeTurn(Player player) {
+    private void takeTurn(Player player) {
+        printPointSheet(player);
         player.counter = 0;
         player.diceSet.rollAllDice();
         player.diceSet.printDiceSet();
@@ -66,9 +96,8 @@ public class Game {
         printPointSheet(player);
         HashMap<SheetCategories, Integer> choice = checkPointSheetOptions(player);
         fillPointSheet(player, choice);
-        printPointSheet(player);
     }
-    public ArrayList<Boolean> getDiceToRoll(Player player) {
+    private ArrayList<Boolean> getDiceToRoll(Player player) {
         System.out.println();
         int placeholder;
         player.inputOver = false;
@@ -87,32 +116,32 @@ public class Game {
         }
         return indexes;
     }
-    public void printFiller(String s) {
+    private void printFiller(String s) {
         System.out.println();
         for(int i = 0; i<50; i++) {
             System.out.print(s);
         }
         System.out.println();
     }
-    public void clearScreen() {
+    private void clearScreen() {
         for(int i= 0; i<30; i++) {
             System.out.println();
         }
     }
-    public void printPointSheet(Player player) {
+    private void printPointSheet(Player player) {
         for(SheetCategories category:player.pointSheet.sheetCategories) {
             System.out.println();
             System.out.printf("%25s",category.getName());
             System.out.print("|");
             System.out.printf("%8s", player.pointSheet.playerPointSheet.get(category));
             System.out.print("| Index: "+category.getIndex());
-            if(category == player.pointSheet.sheetCategories[8] || category == player.pointSheet.sheetCategories[15]) {
-                System.out.println();
+            if(category == player.pointSheet.sheetCategories[8] || category == player.pointSheet.sheetCategories[15] || category == player.pointSheet.sheetCategories[5]) {
                 printFiller("-");
             }
         }
+        printFiller("-");
     }
-    public HashMap<SheetCategories, Integer> checkPointSheetOptions(Player player) {
+    private HashMap<SheetCategories, Integer> checkPointSheetOptions(Player player) {
         int[] takenCategories = new int[18];
         for(int l = 0; l<takenCategories.length; l++) {
             for(Map.Entry<SheetCategories, Integer> entry : player.pointSheet.playerPointSheet.entrySet()) {
@@ -219,6 +248,7 @@ public class Game {
             possibleIndexValues.put(SheetCategories.CHANCE.getIndex(), combinedValue);
         }
 
+        int choice = 0;
         System.out.println();
         for (Integer index : possibleIndexValues.keySet()) {
             int variableKey = index;
@@ -231,15 +261,39 @@ public class Game {
         HashMap<SheetCategories, Integer> chosenCategory = new HashMap<SheetCategories, Integer>();
         if(possibleIndexValues.isEmpty()) {
             System.out.println("You cannot fill any category!!!");
+            choice = scanner.nextInt();
+            chosenCategory.put(SheetCategories.getCategory(choice), -1);
             return chosenCategory;
         }
         System.out.println("Which Category do you want to fill: ");
-        int choice = scanner.nextInt();
+        choice = scanner.nextInt();
 
+        Iterator<Map.Entry<Integer, Integer> >
+                iterator = possibleIndexValues.entrySet().iterator();
+
+        boolean isKeyPresent = false;
+
+        // Iterate over the HashMap
+        while (iterator.hasNext()) {
+
+            // Get the entry at this iteration
+            Map.Entry<Integer, Integer>
+                    entry
+                    = iterator.next();
+
+            // Check if this key is the required key
+            if (choice == entry.getKey()) {
+                isKeyPresent = true;
+            }
+        }
+        if(!isKeyPresent) {
+            chosenCategory.put(SheetCategories.getCategory(choice), -1);
+            return chosenCategory;
+        }
         chosenCategory.put(SheetCategories.getCategory(choice), possibleIndexValues.get(choice));
         return chosenCategory;
     }
-    public void fillPointSheet(Player player, HashMap<SheetCategories, Integer> choice) {
+    private void fillPointSheet(Player player, HashMap<SheetCategories, Integer> choice) {
         if(!choice.isEmpty()) {
             player.pointSheet.playerPointSheet.put(choice.keySet().iterator().next(), choice.get(choice.keySet().iterator().next()));
         }
@@ -249,7 +303,9 @@ public class Game {
         int totalLowerPart = 0;
         int total = 0;
         for(int i = 0; i<6; i++) {
-            totalUpperPart += player.pointSheet.playerPointSheet.get(sheetCategories[i]);
+            if(player.pointSheet.playerPointSheet.get(sheetCategories[i]) != -1) {
+                totalUpperPart += player.pointSheet.playerPointSheet.get(sheetCategories[i]);
+            }
         }
         totalUpperPartWithBonus = totalUpperPart;
         if(totalUpperPart > 62) {
@@ -257,17 +313,21 @@ public class Game {
             bonus = 1;
         }
         for(int j = 9; j<16; j++) {
-            totalLowerPart += player.pointSheet.playerPointSheet.get(sheetCategories[j]);
+            if(player.pointSheet.playerPointSheet.get(sheetCategories[j]) != -1) {
+                totalLowerPart += player.pointSheet.playerPointSheet.get(sheetCategories[j]);
+            }
         }
         total = totalLowerPart + totalUpperPartWithBonus;
 
         player.pointSheet.playerPointSheet.put(SheetCategories.TOTAL_UPPER_PART, totalUpperPart);
-        player.pointSheet.playerPointSheet.put(SheetCategories.BONUS, bonus);
+        if(bonus == 1) {
+            player.pointSheet.playerPointSheet.put(SheetCategories.BONUS, SheetCategories.BONUS.getPointValue());
+        }
         player.pointSheet.playerPointSheet.put(SheetCategories.TOTAL_UPPER_PART_WITH_BONUS, totalUpperPartWithBonus);
         player.pointSheet.playerPointSheet.put(SheetCategories.TOTAL_LOWER_PART, totalLowerPart);
         player.pointSheet.playerPointSheet.put(SheetCategories.TOTAL, total);
     }
-    public static int diffValues(Integer[] numArray){
+    private static int diffValues(Integer[] numArray){
         int numOfDifferentVals = 0;
 
         ArrayList<Integer> diffNum = new ArrayList<>();
@@ -287,7 +347,7 @@ public class Game {
 
         return numOfDifferentVals;
     }
-    static int countOccurrences(Integer[] arr, int n, int x)
+    private static int countOccurrences(Integer[] arr, int n, int x)
     {
         int res = 0;
         for (int i=0; i<n; i++)
