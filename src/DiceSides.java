@@ -16,15 +16,17 @@ public enum DiceSides {
         return VALUE;
     }
 
-    public void printDiceSide() {
+    public String printDiceSide() {
+        String s = "";
         switch (VALUE) {
-            case 1 -> System.out.print("⚀");
-            case 2 -> System.out.print("⚁");
-            case 3 -> System.out.print("⚂");
-            case 4 -> System.out.print("⚃");
-            case 5 -> System.out.print("⚄");
-            case 6 -> System.out.print("⚅");
-            default -> System.out.println("Error");
+            case 1 -> s = "⚀";
+            case 2 -> s = "⚁";
+            case 3 -> s = "⚂";
+            case 4 -> s = "⚃";
+            case 5 -> s = "⚄";
+            case 6 -> s = "⚅";
+            default -> s = "Error";
         }
+        return s;
     }
 }
