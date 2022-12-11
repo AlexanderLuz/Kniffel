@@ -1,6 +1,9 @@
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.*;
 
 public class Game {
+    GameStates gameState = GameStates.ROLL_DICE_PHASE;
     Scanner scanner = new Scanner(System.in);
     int playerCount;
     String playerName;
@@ -16,10 +19,10 @@ public class Game {
             for(Player player: playerList) {
                 System.out.println();
                 System.out.println("Round "+(i+1));
-                printFiller("-");
+
                 System.out.println();
                 System.out.println(player.name);
-                printFiller("-");
+
                 takeTurn(player);
                 clearScreen();
             }
@@ -75,7 +78,6 @@ public class Game {
         scanner.nextLine();
     }
     private void takeTurn(Player player) {
-        printPointSheet(player);
         player.counter = 0;
         player.diceSet.rollAllDice();
         player.diceSet.printDiceSet();
@@ -93,7 +95,6 @@ public class Game {
             }
             player.diceSet.printDiceSet();
         }
-        printPointSheet(player);
         HashMap<SheetCategories, Integer> choice = checkPointSheetOptions(player);
         fillPointSheet(player, choice);
     }
@@ -116,30 +117,29 @@ public class Game {
         }
         return indexes;
     }
-    private void printFiller(String s) {
-        System.out.println();
-        for(int i = 0; i<50; i++) {
-            System.out.print(s);
-        }
-        System.out.println();
+    private String printFiller(String s, int i) {
+       StringBuilder str = new StringBuilder();
+        str.append(s.repeat(i));
+        return String.valueOf(str);
     }
     private void clearScreen() {
         for(int i= 0; i<30; i++) {
             System.out.println();
         }
     }
-    private void printPointSheet(Player player) {
+    public void printPointSheet(Player player, GUI gui) {
+        gui.resultSheet.setRows(21);
+        gui.resultSheet.setColumns(20);
+        gui.resultSheet.append(playerName+"\n");
         for(SheetCategories category:player.pointSheet.sheetCategories) {
-            System.out.println();
-            System.out.printf("%25s",category.getName());
-            System.out.print("|");
-            System.out.printf("%8s", player.pointSheet.playerPointSheet.get(category));
-            System.out.print("| Index: "+category.getIndex());
+            int paddingLength = 25-category.getName().length();
+
+            gui.resultSheet.append(StringUtils.rightPad(category.getName(), paddingLength, " "));
+            gui.resultSheet.append(StringUtils.leftPad("|"+String.valueOf(player.pointSheet.playerPointSheet.get(category)), 15, " ")+"\n");
             if(category == player.pointSheet.sheetCategories[8] || category == player.pointSheet.sheetCategories[15] || category == player.pointSheet.sheetCategories[5]) {
-                printFiller("-");
+                gui.resultSheet.append(printFiller("-", 25)+"\n");
             }
         }
-        printFiller("-");
     }
     private HashMap<SheetCategories, Integer> checkPointSheetOptions(Player player) {
         int[] takenCategories = new int[18];
@@ -256,7 +256,6 @@ public class Game {
 
             System.out.println("Index: " + variableKey+ " / " + SheetCategories.getCategory(index).getName());
             System.out.println("Value: " + variableValue);
-            printFiller("-");
         }
         HashMap<SheetCategories, Integer> chosenCategory = new HashMap<SheetCategories, Integer>();
         if(possibleIndexValues.isEmpty()) {
