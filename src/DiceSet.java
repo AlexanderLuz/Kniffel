@@ -20,15 +20,11 @@ public class DiceSet {
             }
         }
     }
-    public void printDiceSet() {
-        System.out.println();
+    public String printDiceSet() {
+        StringBuilder str = new StringBuilder();
         for(Dice dice:DICES) {
-            dice.currentSide.printDiceSide();
+            str.append(dice.currentSide.printDiceSide());
         }
-        System.out.println();
-        for(Dice dice:DICES) {
-            System.out.print(dice.currentSide.getValue());
-        }
-        System.out.println();
+        return String.valueOf(str);
     }
 }
